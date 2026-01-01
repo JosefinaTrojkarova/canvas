@@ -30,4 +30,4 @@ The client application will typically be available at `http://localhost:5173`.
 
 ## Notice
 
-This project was developed with the help of AI.
+This project was developed with the help of AI in the Google Antigravity code editor. The entire chat history is available in the AI chats folder.
