@@ -1,6 +1,7 @@
 # Pixel Canvas
 
 A real-time collaborative pixel art canvas application.
+Public repo: https://github.com/JosefinaTrojkarova/canvas/ 
 
 ## Setup Instructions
 
