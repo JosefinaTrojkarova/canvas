@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const studioId = route.params.id
 const canvasRef = ref(null)
 const ws = ref(null)
@@ -61,6 +62,12 @@ function onCanvasClick(e) {
 }
 
 onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+
   timerInterval = setInterval(() => {
     currentTime.value = Date.now()
   }, 1000)
@@ -70,7 +77,8 @@ onMounted(() => {
   ws.value.onopen = () => {
     ws.value.send(JSON.stringify({
       type: 'JOIN',
-      studioId
+      studioId,
+      token
     }))
   }
   
@@ -86,7 +94,11 @@ onMounted(() => {
     } else if (data.type === 'COOLDOWN_START') {
       lastDrawTime.value = data.timestamp
     } else if (data.type === 'ERROR') {
-      if (data.cooldown) lastDrawTime.value = data.cooldown
+      if (data.code === 'UNAUTHORIZED') {
+        router.push('/login')
+      } else if (data.cooldown) {
+        lastDrawTime.value = data.cooldown
+      }
     }
   }
 })
@@ -119,7 +131,6 @@ onUnmounted(() => {
 .studio {
   display: flex;
   flex-direction: column;
-  items: center;
   padding: 20px;
   align-items: center;
 }
