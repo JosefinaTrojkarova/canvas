@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,6 +13,11 @@ const selectedColor = ref('#000000')
 const lastDrawTime = ref(0)
 const currentTime = ref(Date.now())
 const COOLDOWN_MS = 5 * 60 * 1000
+
+const PRESET_COLORS = [
+  '#000000', '#ffffff', '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
+  '#10b981', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef'
+]
 
 const canDraw = computed(() => {
   return currentTime.value - lastDrawTime.value >= COOLDOWN_MS
@@ -111,18 +117,50 @@ onUnmounted(() => {
 
 <template>
   <div class="studio">
-    <div class="controls">
-      <input type="color" v-model="selectedColor" />
-      <div v-if="!canDraw" class="timer">Wait: {{ TimeRemaining }}</div>
-      <div v-else class="ready">Ready to draw!</div>
+    <div class="studio-header">
+      <div class="controls-card">
+        <div class="color-picker-section">
+          <label>Color</label>
+          <div class="color-presets">
+             <button 
+               v-for="c in PRESET_COLORS" 
+               :key="c"
+               class="color-btn"
+               :class="{ active: selectedColor === c }"
+               :style="{ backgroundColor: c }"
+               @click="selectedColor = c"
+             ></button>
+          </div>
+          <input type="color" v-model="selectedColor" class="native-picker" />
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="status-section">
+           <div v-if="!canDraw" class="timer-display">
+             <span class="timer-icon">⏳</span>
+             <span>Wait {{ TimeRemaining }}</span>
+           </div>
+           <div v-else class="ready-display">
+             <span class="ready-icon">✨</span>
+             <span>Ready to draw!</span>
+           </div>
+        </div>
+      </div>
     </div>
-    <div class="canvas-container">
-      <canvas 
-        ref="canvasRef" 
-        width="1000" 
-        height="400"
-        @click="onCanvasClick"
-      ></canvas>
+
+    <div class="canvas-wrapper">
+      <div class="canvas-container" :class="{ disabled: !canDraw }">
+        <canvas 
+          ref="canvasRef" 
+          width="1000" 
+          height="400"
+          @click="onCanvasClick"
+        ></canvas>
+        <div v-if="!canDraw" class="cooldown-overlay">
+          <span>Cooldown Active</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -131,31 +169,167 @@ onUnmounted(() => {
 .studio {
   display: flex;
   flex-direction: column;
-  padding: 20px;
   align-items: center;
+  width: 100%;
+  padding: 2rem;
+  gap: 2rem;
 }
-.controls {
-  margin-bottom: 20px;
+
+.studio-header {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.controls-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
   display: flex;
-  gap: 20px;
   align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
 }
+
+.color-picker-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.color-picker-section label {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.color-presets {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+}
+
+.color-btn.active {
+  border-color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.native-picker {
+  -webkit-appearance: none;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+.native-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.native-picker::-webkit-color-swatch {
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: var(--color-border);
+}
+
+.status-section {
+  min-width: 150px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.timer-display, .ready-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.timer-display {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.ready-display {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.canvas-wrapper {
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+}
+
 .canvas-container {
-  border: 1px solid #666;
+  position: relative;
   background: #fff;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s;
+  width: 1000px;
+  height: 400px;
 }
+
+.canvas-container.disabled {
+  cursor: not-allowed;
+}
+
 canvas {
   image-rendering: pixelated;
   cursor: crosshair;
   width: 1000px;
   height: 400px;
+  display: block;
 }
-.timer {
-  color: #ff6666;
-  font-weight: bold;
+
+.canvas-container.disabled canvas {
+  cursor: not-allowed;
 }
-.ready {
-  color: #66ff66;
-  font-weight: bold;
+
+.cooldown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.canvas-container:hover .cooldown-overlay {
+  opacity: 1;
+}
+
+.cooldown-overlay span {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 </style>

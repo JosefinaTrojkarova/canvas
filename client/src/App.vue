@@ -1,6 +1,7 @@
 <script setup>
 import { RouterView, useRouter } from 'vue-router'
 import { ref } from 'vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const router = useRouter()
 const user = ref(localStorage.getItem('currentUser'))
@@ -18,44 +19,78 @@ function logout() {
 </script>
 
 <template>
-  <nav>
-     <router-link to="/" class="brand">Canvas</router-link>
-     <div class="auth-links">
-       <span v-if="user">
-         {{ user }} 
-         <button @click="logout" class="logout-btn">Logout</button>
-       </span>
-       <template v-else>
-         <router-link to="/login">Login</router-link>
-         <router-link to="/register">Register</router-link>
-       </template>
-     </div>
-  </nav>
-  <RouterView />
+  <div class="app-container">
+    <nav class="navbar">
+       <div class="nav-content">
+         <router-link to="/" class="brand">
+           <span class="brand-text">Canvas</span>
+         </router-link>
+         
+         <div class="auth-links">
+           <span v-if="user" class="user-info">
+             <span class="username">{{ user }}</span>
+             <BaseButton @click="logout" variant="ghost" class="logout-btn">Logout</BaseButton>
+           </span>
+           <template v-else>
+             <router-link to="/login">
+               <BaseButton variant="ghost">Login</BaseButton>
+             </router-link>
+             <router-link to="/register">
+               <BaseButton variant="primary">Register</BaseButton>
+             </router-link>
+           </template>
+         </div>
+       </div>
+    </nav>
+
+    <main class="main-content">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
-<style>
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #222;
-  color: #fff;
+<style scoped>
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-nav {
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: #333;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .brand {
-  color: #fff;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-text {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
 }
 
 .auth-links {
@@ -64,25 +99,31 @@ nav {
   align-items: center;
 }
 
-.auth-links a {
-  color: #ccc;
-  text-decoration: none;
-}
-.auth-links a:hover {
-  color: #fff;
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.logout-btn {
-  background: none;
-  border: 1px solid #666;
-  color: #ccc;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 10px;
+.username {
+  color: var(--color-text);
+  font-weight: 500;
 }
-.logout-btn:hover {
-  background: #444;
-  color: #fff;
+
+.main-content {
+  margin-top: 80px; /* Navbar height compensation */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 640px) {
+  .nav-content {
+    padding: 1rem;
+  }
+  
+  .brand-text {
+    font-size: 1.25rem;
+  }
 }
 </style>

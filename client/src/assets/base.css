@@ -1,53 +1,33 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* Base Reset & Variables */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  /* HSL Palette for easy theme manipulation */
+  --color-primary-hue: 240; /* Indigo */
+  --color-primary-sat: 80%;
+  --color-primary-light: 65%;
+  --color-primary-main: 55%;
+  --color-primary-dark: 45%;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  --bg-dark-h: 222;
+  --bg-dark-s: 47%;
+  --bg-dark-l: 11%; /* #0f172a */
+  
+  --bg-surface-h: 217;
+  --bg-surface-s: 33%;
+  --bg-surface-l: 17%; /* #1e293b */
 
-  --vt-c-indigo: #2c3e50;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* Computed Colors */
+  --color-background: hsl(var(--bg-dark-h), var(--bg-dark-s), var(--bg-dark-l));
+  --color-surface: hsl(var(--bg-surface-h), var(--bg-surface-s), var(--bg-surface-l));
+  --color-primary: hsl(var(--color-primary-hue), var(--color-primary-sat), var(--color-primary-main));
+  --color-primary-hover: hsl(var(--color-primary-hue), var(--color-primary-sat), var(--color-primary-light));
+  --color-text: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-border: rgba(148, 163, 184, 0.2);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-}
-
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 *,
@@ -55,6 +35,7 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
+  position: relative;
   font-weight: normal;
 }
 
@@ -62,25 +43,38 @@ body {
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
+  font-family: var(--font-family);
+  font-size: 16px;
   line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+  transition: 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+input, button {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
 }
